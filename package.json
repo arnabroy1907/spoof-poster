@@ -2,6 +2,13 @@
   "name": "spoof-poster",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Arnab Roy",
+    "email": "arnabroy1907dev@gmail.com"
+  },
+  "repository": {
+    "url": "https://github.com/arnabroy1907/spoof-poster"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
