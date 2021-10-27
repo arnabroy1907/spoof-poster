@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Post } from '../../../service/models';
 import { getAllPosts } from '../../../service/db/dummy-data';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 const handler = async (
     req: NextApiRequest,

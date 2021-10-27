@@ -6,7 +6,7 @@ import {
     Like,
     Chat
 } from '../models';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 const timeMillis = new Date().getTime();
 
@@ -91,10 +91,10 @@ const generatePosts = (size: number): Post[] => {
     for (let i = 0; i < size; i++) {
         const template = (getRandomFromRange(1, 10) % 2 === 0) ? 'TEXT' : 'IMAGE';
         if (template === 'TEXT') {
-            const text = textArr[getRandomFromRange(0, 4)];
+            const text = textArr[getRandomFromRange(0, 3)];
             postsArray.push({
                 id: uuid.v4(),
-                userId: userArr[getRandomFromRange(0, 4)].userId,
+                userId: userArr[getRandomFromRange(0, 3)].userId,
                 template: template,
                 textData: {
                     text: text,
@@ -104,7 +104,7 @@ const generatePosts = (size: number): Post[] => {
                         fontSize: '16px',
                         fontWeight: '500',
                         fontStyle: 'normal',
-                        backgroundColor: bgColorArr[getRandomFromRange(0, 4)],
+                        backgroundColor: bgColorArr[getRandomFromRange(0, 3)],
                     }
                 },
                 headline: text.substring(0, 20),
@@ -113,12 +113,12 @@ const generatePosts = (size: number): Post[] => {
                 commentsCount: Math.floor(Math.random() * 500)
             });
         } else {
-            const text = textArr[getRandomFromRange(0, 4)];
+            const text = textArr[getRandomFromRange(0, 3)];
             postsArray.push({
                 id: uuid.v4(),
-                userId: userArr[getRandomFromRange(0, 4)].userId,
+                userId: userArr[getRandomFromRange(0, 3)].userId,
                 template: template,
-                image: memeImageSrcs[getRandomFromRange(0, 6)],
+                image: memeImageSrcs[getRandomFromRange(0, 5)],
                 caption: text,
                 headline: text.substring(0, 20),
                 createdDate: new Date().getTime(),
