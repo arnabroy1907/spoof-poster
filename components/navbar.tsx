@@ -2,9 +2,12 @@ import React from 'react';
 import st from 'styled-components';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { ProfileMenu } from './profileMenu';
 
 const NavBarWrapper = st.div`
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: fixed;
     top: 0;
     left: 0;
@@ -17,6 +20,7 @@ const NavBarWrapper = st.div`
         padding: 0.5rem 0.5rem;
     }
     z-index: 2;
+    box-shadow: 0 0 4px 2px #333;
 `;
 
 const SPLogo = st.div`
@@ -38,6 +42,10 @@ const SPLogo = st.div`
 
 export const NavigationBar = () => {
     const router = useRouter();
+    const user = {
+        pic: 'https://ik.imagekit.io/zn7zdwokee9/old_man_prof.png?updatedAt=1635409108827',
+        name: 'Old Man'
+    }
     return (
         <NavBarWrapper>
             <SPLogo onClick={() => { router.push('/') }}>
@@ -47,7 +55,7 @@ export const NavigationBar = () => {
                     layout='fill'
                 />
             </SPLogo>
-
+            <ProfileMenu user={user}/>
         </NavBarWrapper>
     )
 };

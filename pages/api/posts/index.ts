@@ -9,7 +9,7 @@ const handler = async (
 ) => {
     try {
         if (req.method === 'GET') {
-            const posts = await getAllPosts();
+            const posts = await getAllPosts(50);
             res.status(200).json(posts);
             return;
         }

@@ -1,16 +1,20 @@
-export interface User {
+export interface UserBase {
     userId: string;
+    username: string;
+    name: string;
+    pic: string;
+}
+
+export interface User extends UserBase {
     email: string;
     passwordHash: string;
     createdDate: number;
-    name: string;
     bio: string;
-    pic: string;
 }
 
 export interface Post {
     id: string;
-    userId: string;
+    user: UserBase;
     template: 'TEXT'|'IMAGE';
     image?: string;
     textData?: {
@@ -33,7 +37,7 @@ export interface Post {
 
 export interface Comment {
     id: string;
-    userId: string;
+    user: UserBase;
     text: string;
     repliesCount: number;
     createdDate: number;
@@ -41,14 +45,14 @@ export interface Comment {
 
 export interface Reply {
     id: string;
-    userId: string;
+    user: UserBase;
     text: string;
     createdDate: number;
 }
 
 export interface Like {
     id: string;
-    userId: string;
+    user: UserBase;
     postId: string;
     createdDate: number;
 }

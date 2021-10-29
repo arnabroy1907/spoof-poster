@@ -12,6 +12,7 @@ const timeMillis = new Date().getTime();
 
 const userOne: User = {
     userId: uuid.v4(),
+    username: 'user_one01',
     email: 'userone@mail.com',
     passwordHash: 'asdasdasd',
     name: 'User One',
@@ -22,6 +23,7 @@ const userOne: User = {
 
 const userTwo: User = {
     userId: uuid.v4(),
+    username: 'user_two_2',
     email: 'usertwo@mail.com',
     passwordHash: 'asdasdasd',
     name: 'User Two',
@@ -32,21 +34,34 @@ const userTwo: User = {
 
 const userThree: User = {
     userId: '21490993-8c96-4709-9ec6-31df9e30589e',
+    username: 'user_three3',
     email: 'userthree@mail.com',
     passwordHash: 'asdasdasd',
     name: 'User Three',
     bio: 'A Version 1 UUID is a universally unique identifier that is generated using a timestamp and the MAC address of the computer on which it was generated.',
-    pic: 'https://ik.imagekit.io/zn7zdwokee9/Devme_N7FY5h9s_.png',
+    pic: 'https://ik.imagekit.io/zn7zdwokee9/old_man_prof.png',
     createdDate: timeMillis
 };
 
 const userFour: User = {
     userId: uuid.v4(),
+    username: 'user_04four',
     email: 'userfour@mail.com',
     passwordHash: 'asdasdasd',
     name: 'User Four',
     bio: 'A Version 4 UUID is a universally unique identifier that is generated using random numbers. The Version 4 UUIDs produced by this site were generated using a secure random number generator.',
     pic: '',
+    createdDate: timeMillis
+};
+
+const userFive: User = {
+    userId: uuid.v4(),
+    username: 'user_five_01',
+    email: 'userfive@mail.com',
+    passwordHash: 'asdasdasd',
+    name: 'User Five',
+    bio: 'A Version 1 UUID is a universally unique identifier that is generated using a timestamp and the MAC address of the computer on which it was generated.',
+    pic: 'https://ik.imagekit.io/zn7zdwokee9/Devme_N7FY5h9s_.png',
     createdDate: timeMillis
 };
 
@@ -77,7 +92,8 @@ const userArr: User[] = [
     userOne,
     userTwo,
     userThree,
-    userFour
+    userFour,
+    userFive
 ];
 
 const getRandomFromRange = (start: number, end: number): number => {
@@ -92,17 +108,18 @@ const generatePosts = (size: number): Post[] => {
         const template = (getRandomFromRange(1, 10) % 2 === 0) ? 'TEXT' : 'IMAGE';
         if (template === 'TEXT') {
             const text = textArr[getRandomFromRange(0, 3)];
+            const user = userArr[getRandomFromRange(0, 4)];
             postsArray.push({
                 id: uuid.v4(),
-                userId: userArr[getRandomFromRange(0, 3)].userId,
+                user: user,
                 template: template,
                 textData: {
                     text: text,
                     style: {
                         fontColor: '#000',
-                        fontFamily: 'Aspira',
-                        fontSize: '16px',
-                        fontWeight: '500',
+                        fontFamily: (getRandomFromRange(1, 10) % 2 === 0) ? 'Aspira' : 'cursive',
+                        fontSize: '24px',
+                        fontWeight: '700',
                         fontStyle: 'normal',
                         backgroundColor: bgColorArr[getRandomFromRange(0, 3)],
                     }
@@ -114,9 +131,10 @@ const generatePosts = (size: number): Post[] => {
             });
         } else {
             const text = textArr[getRandomFromRange(0, 3)];
+            const user = userArr[getRandomFromRange(0, 4)];
             postsArray.push({
                 id: uuid.v4(),
-                userId: userArr[getRandomFromRange(0, 3)].userId,
+                user: user,
                 template: template,
                 image: memeImageSrcs[getRandomFromRange(0, 5)],
                 caption: text,
@@ -136,15 +154,15 @@ const posts = generatePosts(50);
 export const getPostsByUser = async (userId: string) => {
     return new Promise<Post[]>((resolve, reject) => {
         setTimeout(() => {
-            resolve(posts.filter(post => post.userId === userId));
+            resolve(posts.filter(post => post.user.userId === userId));
         }, 100);
     });
 };
 
-export const getAllPosts = async () => {
+export const getAllPosts = async (limit: number) => {
     return new Promise<Post[]>((resolve, reject) => {
         setTimeout(() => {
-            resolve(posts);
-        }, 100);
+            resolve(generatePosts(limit));
+        }, 1000);
     });
 };
