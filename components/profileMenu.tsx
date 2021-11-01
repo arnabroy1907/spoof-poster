@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import st from 'styled-components';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { UserBase } from '../service/models';
 
 const ProfileMenuContainer = st.div`
     width: 40px;
@@ -21,7 +22,7 @@ const ProfileDropdown = st.div`
     top: 3.2rem;
     right: 0.5rem;
     display: flex;
-    width: 12rem;
+    width: 10rem;
     flex-direction: column;
     background-color: #fff;
     color: #000;
@@ -32,20 +33,29 @@ const ProfileDropdown = st.div`
 
 const ProfileName = st.div`
     width: 100%;
-    padding: 1rem 0.5rem;
+    padding: 0.5rem;
+    padding-left: 1.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 18px;
     font-weight: 700;
     color: #549;
+`;
+
+const ProfileSubName = st(ProfileName)`
+    font-size: 14px;
+    font-weight: 700;
+    color: #549a;
+    padding-top: 0;
+    padding-left: 1.75rem;
     border-bottom: solid 1px #dcdcdc;
 `;
 
 const ProfileMenus = st.div`
     width: 100%;
     padding: 0.5rem;
-    padding-left: 1.5rem;
+    padding-left: 2.5rem;
     font-size: 700;
     color: #549;
     &:hover {
@@ -61,9 +71,12 @@ const ProfileLogoutMenu = st(ProfileMenus)`
     border-top: solid 1px #dcdcdc;
 `;
 
+type ProfileProps = {
+    user: UserBase;
+}
 
 
-export const ProfileMenu = (props: any) => {
+export const ProfileMenu = (props: ProfileProps) => {
     const [showMenu, setShowMenu] = useState(false);
     const profMenuRef = useRef(null);
     const rtx = useRouter();
@@ -109,7 +122,8 @@ export const ProfileMenu = (props: any) => {
                 />
                 {showMenu && 
                     <ProfileDropdown>
-                        <ProfileName> {`${props.user.name} ${props.user.name} ${props.user.name}`}</ProfileName>
+                        <ProfileName> {props.user.name} </ProfileName>
+                        <ProfileSubName> {props.user.username} </ProfileSubName>
                         <ProfileMenus onClick={clickProfileMenu}> Profile </ProfileMenus>
                         <ProfileMenus onClick={clickSettingsMenu}> Settings </ProfileMenus>
                         <ProfileLogoutMenu onClick={clickLogoutMenu}> Logout </ProfileLogoutMenu>

@@ -117,7 +117,7 @@ const generatePosts = (size: number): Post[] => {
                     text: text,
                     style: {
                         fontColor: '#000',
-                        fontFamily: (getRandomFromRange(1, 10) % 2 === 0) ? 'Aspira' : 'cursive',
+                        fontFamily: (getRandomFromRange(1, 10) > 7) ? 'Aspira' : 'cursive',
                         fontSize: '24px',
                         fontWeight: '700',
                         fontStyle: 'normal',
@@ -127,7 +127,8 @@ const generatePosts = (size: number): Post[] => {
                 headline: text.substring(0, 20),
                 createdDate: new Date().getTime(),
                 likesCount: Math.floor(Math.random() * 5000),
-                commentsCount: Math.floor(Math.random() * 500)
+                commentsCount: Math.floor(Math.random() * 500),
+                likedByUser: (getRandomFromRange(1, 10) % 2 === 0)
             });
         } else {
             const text = textArr[getRandomFromRange(0, 3)];
@@ -141,7 +142,8 @@ const generatePosts = (size: number): Post[] => {
                 headline: text.substring(0, 20),
                 createdDate: new Date().getTime(),
                 likesCount: Math.floor(Math.random() * 5000),
-                commentsCount: Math.floor(Math.random() * 500)
+                commentsCount: Math.floor(Math.random() * 500),
+                likedByUser: (getRandomFromRange(1, 10) > 7)
             });
         }
     }
@@ -166,3 +168,69 @@ export const getAllPosts = async (limit: number) => {
         }, 1000);
     });
 };
+
+export const getPostById = async (postId: string) => {
+    let post: Post;
+
+    const template = (getRandomFromRange(1, 10) % 2 === 0) ? 'TEXT' : 'IMAGE';
+    if (template === 'TEXT') {
+        const text = textArr[getRandomFromRange(0, 3)];
+        const user = userArr[getRandomFromRange(0, 4)];
+        post = {
+            id: postId,
+            user: user,
+            template: template,
+            textData: {
+                text: text,
+                style: {
+                    fontColor: '#000',
+                    fontFamily: (getRandomFromRange(1, 10) > 7) ? 'Aspira' : 'cursive',
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    fontStyle: 'normal',
+                    backgroundColor: bgColorArr[getRandomFromRange(0, 3)],
+                }
+            },
+            headline: text.substring(0, 20),
+            createdDate: new Date().getTime(),
+            likesCount: Math.floor(Math.random() * 5000),
+            commentsCount: Math.floor(Math.random() * 500),
+            likedByUser: (getRandomFromRange(1, 10) % 2 === 0)
+        };
+    } else {
+        const text = textArr[getRandomFromRange(0, 3)];
+        const user = userArr[getRandomFromRange(0, 4)];
+        post = {
+            id: postId,
+            user: user,
+            template: template,
+            image: memeImageSrcs[getRandomFromRange(0, 5)],
+            caption: text,
+            headline: text.substring(0, 20),
+            createdDate: new Date().getTime(),
+            likesCount: Math.floor(Math.random() * 5000),
+            commentsCount: Math.floor(Math.random() * 500),
+            likedByUser: (getRandomFromRange(1, 10) > 7)
+        };
+    }
+
+    const commentList: Comment[] = [];
+    for (let i = 0; i < 50; i++) {
+        commentList.push({
+            text: textArr[getRandomFromRange(0, 3)],
+            id: uuid.v4(),
+            repliesCount: Math.floor(Math.random() * 10),
+            createdDate: new Date().getTime(),
+            user: userArr[getRandomFromRange(0, 4)]
+        });
+    }
+
+    return new Promise<{post: Post, commentList: Comment[]}>((resolve, reject) => {
+        setTimeout(() => {
+            resolve({
+                post: post,
+                commentList: commentList
+            });
+        }, 1000);
+    });
+}

@@ -33,6 +33,7 @@ export interface Post {
     likesCount: number;
     commentsCount: number;
     createdDate: number;
+    likedByUser: boolean;
 }
 
 export interface Comment {

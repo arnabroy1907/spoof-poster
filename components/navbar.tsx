@@ -3,6 +3,7 @@ import st from 'styled-components';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { ProfileMenu } from './profileMenu';
+import { UserBase } from '../service/models';
 
 const NavBarWrapper = st.div`
     display: flex;
@@ -42,9 +43,11 @@ const SPLogo = st.div`
 
 export const NavigationBar = () => {
     const router = useRouter();
-    const user = {
+    const user: UserBase = {
         pic: 'https://ik.imagekit.io/zn7zdwokee9/old_man_prof.png?updatedAt=1635409108827',
-        name: 'Old Man'
+        name: 'Old Man',
+        userId: 'asdasdasdasdasdasdadsdadas',
+        username: 'old_man98'
     }
     return (
         <NavBarWrapper>

@@ -4,7 +4,7 @@ import { NavigationBar } from './navbar';
 
 const MainContainer = st.div`
     width: 100%;
-    margin-top: 4rem;
+    margin-top: 2.5rem;
     padding: 1rem;
     display: flex;
     flex-direction: column;

@@ -6,7 +6,7 @@ import { Post as PostType } from '../../service/models';
 
 const FeedsContainer = st.div`
     margin-top: -1.5rem;
-    width: 60%;
+    width: 70%;
     min-width: 27rem;
     background-color: #fff;
     box-shadow: 0 0 10px 2px #ccc;

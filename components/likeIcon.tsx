@@ -12,6 +12,8 @@ type LikeIconProps = {
     width: string;
     height: string;
     setIsLiked: Function
+    likesCount?: number;
+    setLikesCount?: Function
 }
 
 const LikeButtonIcon = st.div`
@@ -21,11 +23,11 @@ const LikeButtonIcon = st.div`
         height: ${(props: LikeProps) => props.height};
     }
     #fill-inside {
-        fill: ${(props: LikeProps) => props.isLiked ? '#f25' : '#fff'};
+        fill: ${(props: LikeProps) => props.isLiked ? '#f34' : '#fff'};
         transition: 100ms;
     }
     #fill-line {
-        fill: ${(props: LikeProps) => props.isLiked ? '#f25' : '#000'};
+        fill: ${(props: LikeProps) => props.isLiked ? '#f34' : '#000'};
         transition: 100ms;
     }
 `;
@@ -39,6 +41,7 @@ export const LikeIcon = (props: LikeIconProps) => {
             width={props.width}
             height={props.height}
             onClick={() => {
+                props.setLikesCount && props.likesCount && props.setLikesCount(isLiked ? props.likesCount - 1 : props.likesCount + 1);
                 setIsLiked(!isLiked);
                 props.setIsLiked();
             }}
