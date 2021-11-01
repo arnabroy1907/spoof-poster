@@ -1,16 +1,18 @@
 /* eslint-disable react/no-unknown-property */
 import React, { useState } from 'react';
 import st from 'styled-components';
-import { Post as PostType } from '../service/models';
+import { Post as PostType, Comment } from '../service/models';
 import Image from 'next/image';
 import { LikeIcon } from './likeIcon';
 import { getStringedDate } from '../libs/utils/common.utils';
 import { getAllPosts } from '../service/db/dummy-data';
 import { useRouter } from 'next/router';
+import { CommentItem } from './comment';
 
 type PostProps = {
     post: PostType;
     showComments?: boolean;
+    commentList?: Comment[]
 }
 
 type TextImageProps = {
@@ -26,8 +28,12 @@ type ButtonProps = {
     isDisabled: boolean;
 }
 
+const PostMainWrapper = st.div`
+    width: 100%;
+`;
+
 const PostContainer = st.div`
-    width: 70%;
+    width: 100%;
     margin: 3rem 0;
     border: solid #ccc 1px;
     box-shadow: 0 0 5px 2px #ccc;
@@ -39,6 +45,9 @@ const PostContainer = st.div`
     @media only screen and (max-width: 599px) {
         width: 100%;
     }
+`;
+
+const PostCommentsContainer = st.div`
 `;
 
 const PostHeaderSection = st.div`
@@ -198,6 +207,7 @@ const CommentIcon = (props: any) => {
 
 export const Post = (props: PostProps) => {
     const post = props.post;
+    const commentList = props.commentList || [];
 
     const [likesCount, setLikesCount] = useState(post.likesCount);
     const [commentsCount, setCommentsCount] = useState(post.commentsCount);
@@ -252,6 +262,7 @@ export const Post = (props: PostProps) => {
     }
 
     return (
+        <PostMainWrapper>
         <PostContainer>
             <PostHeaderSection>
                 <PostHeaderSectionImage>
@@ -300,12 +311,14 @@ export const Post = (props: PostProps) => {
                 </PostLCCounts>
                 <CommentIcon
                     onClick={() => {
-                        rtr.push({
-                            pathname: '/feeds/[...slug]',
-                            query: {
-                                slug: [post.id, post.headline.toLowerCase().replaceAll(' ', '-')]
-                            }
-                        });
+                        if (!props.showComments) {
+                            rtr.push({
+                                pathname: '/feeds/[...slug]',
+                                query: {
+                                    slug: [post.id, post.headline.toLowerCase().replaceAll(' ', '-')]
+                                }
+                            });
+                        }
                     }}
                 />
                 <PostLCCounts>
@@ -339,5 +352,9 @@ export const Post = (props: PostProps) => {
                 </PostAddCommentSection>
             }
         </PostContainer>
+            <PostCommentsContainer>
+                {commentList.map(comment => <CommentItem key={comment.id} comment={comment}/>)}
+            </PostCommentsContainer>
+        </PostMainWrapper>
     );
 }

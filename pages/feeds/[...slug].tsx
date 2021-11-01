@@ -14,10 +14,6 @@ const PostContainer = st.div`
     width: 95%;
 `;
 
-const PostWrapper = st.div`
-    width: 100%;
-`;
-
 const SinglePostPage = () => {
     const rtr = useRouter();
 
@@ -53,7 +49,7 @@ const SinglePostPage = () => {
     return(
         <PostContainer>
             {postData && 
-                <Post post={postData} showComments={true} />
+                <Post post={postData} showComments={true} commentList={commentList} />
             }
         </PostContainer>
     );
