@@ -4,7 +4,8 @@ import {
     Comment,
     Reply,
     Like,
-    Chat
+    Chat,
+    UserBase
 } from '../models';
 import * as uuid from 'uuid';
 
@@ -101,6 +102,15 @@ const getRandomFromRange = (start: number, end: number): number => {
     return Math.max(Math.min(start + Math.floor(Math.random() * (exEnd - start)), end), start);
 };
 
+const getBaseUserFromFullUser = (user: User): UserBase => {
+    return {
+        userId: user.userId,
+        pic: user.pic,
+        name: user.name,
+        username: user.username
+    }
+}
+
 const generatePosts = (size: number): Post[] => {
     const postsArray: Post[] = [];
 
@@ -111,7 +121,7 @@ const generatePosts = (size: number): Post[] => {
             const user = userArr[getRandomFromRange(0, 4)];
             postsArray.push({
                 id: uuid.v4(),
-                user: user,
+                user: getBaseUserFromFullUser(user),
                 template: template,
                 textData: {
                     text: text,
@@ -135,7 +145,7 @@ const generatePosts = (size: number): Post[] => {
             const user = userArr[getRandomFromRange(0, 4)];
             postsArray.push({
                 id: uuid.v4(),
-                user: user,
+                user: getBaseUserFromFullUser(user),
                 template: template,
                 image: memeImageSrcs[getRandomFromRange(0, 5)],
                 caption: text,
@@ -156,7 +166,7 @@ const posts = generatePosts(50);
 export const getPostsByUser = async (userId: string) => {
     return new Promise<Post[]>((resolve, reject) => {
         setTimeout(() => {
-            resolve(posts.filter(post => post.user.userId === userId));
+            resolve(posts.filter(post => post.user.userId === userId || post.user.userId === userThree.userId));
         }, 100);
     });
 };
@@ -178,7 +188,7 @@ export const getPostById = async (postId: string) => {
         const user = userArr[getRandomFromRange(0, 4)];
         post = {
             id: postId,
-            user: user,
+            user: getBaseUserFromFullUser(user),
             template: template,
             textData: {
                 text: text,
@@ -202,7 +212,7 @@ export const getPostById = async (postId: string) => {
         const user = userArr[getRandomFromRange(0, 4)];
         post = {
             id: postId,
-            user: user,
+            user: getBaseUserFromFullUser(user),
             template: template,
             image: memeImageSrcs[getRandomFromRange(0, 5)],
             caption: text,
@@ -215,13 +225,13 @@ export const getPostById = async (postId: string) => {
     }
 
     const commentList: Comment[] = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 10; i++) {
         commentList.push({
             text: textArr[getRandomFromRange(0, 3)],
             id: uuid.v4(),
             repliesCount: Math.floor(Math.random() * 10),
             createdDate: new Date().getTime(),
-            user: userArr[getRandomFromRange(0, 4)]
+            user: getBaseUserFromFullUser(userArr[getRandomFromRange(0, 4)])
         });
     }
 
@@ -232,5 +242,29 @@ export const getPostById = async (postId: string) => {
                 commentList: commentList
             });
         }, 1000);
+    });
+}
+
+export const getLikedUsersByPost = async (postId: string) => {
+    return new Promise<UserBase[]>((resolve, _reject) => {
+        const likedUserList: UserBase[] = [];
+        for (let i = 0; i < 50; i++) {
+            const user = userArr[getRandomFromRange(0, 4)];
+            likedUserList.push(getBaseUserFromFullUser(user));
+        }
+        
+        setTimeout(() => {
+            resolve(likedUserList);
+        }, 300);
+    });
+}
+
+export const getUserById = async (userId: string) => {
+    return new Promise<User>((resolve, _reject) => {
+        const user = userArr[getRandomFromRange(0, 4)];
+        
+        setTimeout(() => {
+            resolve(user);
+        }, 300);
     });
 }

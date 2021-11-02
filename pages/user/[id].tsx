@@ -31,7 +31,8 @@ const ProfileMainContainer = st.div`
     }
 `;
 
-const UserHome = (props: ProfilePageProps) => {
+const SingleUserPage = (props: ProfilePageProps) => {
+
     return (
         <ProfileMainContainer>
             <ProfilePage user={props.user} posts={props.posts}/>
@@ -42,13 +43,12 @@ const UserHome = (props: ProfilePageProps) => {
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { params, req, res} = context;
 
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.includes('Bearer ')) {
-        // do auth logics
-        // get userId
-    }
+    const userId = params && params.id;
 
-    const userId = 'abcd';
+    if (!userId || typeof userId !== 'string') return {
+        props: {}
+    };
+
     const user = await getUserById(userId);
     const posts = await getPostsByUser(userId);
 
@@ -61,4 +61,4 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     return response;
 };
 
-export default UserHome;
+export default SingleUserPage;

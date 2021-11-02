@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import React from 'react';
 import st from 'styled-components';
 import { Post as PostType, Comment} from '../../service/models';
 import { getPostById } from '../../service/db/dummy-data';
 import { Post } from '../../components/post';
+import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
 const PostContainer = st.div`
     background-color: #fff;
@@ -11,48 +11,42 @@ const PostContainer = st.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 95%;
+    width: 70%;
+    min-width: 27rem;
+    @media only screen and (max-width: 480px) {
+        width: 100%;
+        min-width: 19rem;
+    }
 `;
 
-const SinglePostPage = () => {
-    const rtr = useRouter();
+type SinglePostPageProps = {
+    post: PostType;
+    commentList: Comment[];
+};
 
-    const [postData, setPostData] = useState<PostType>();
-    const [commentList, setCommentList] = useState<Comment[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-
-    const postId = rtr && rtr.query && rtr.query.slug && rtr.query.slug[0];
-
-    useEffect(() => {
-        const getData = async () => {
-            if (!postId) return;
-            const data = await getPostById(postId);
-            if (data && data.post && data.commentList) {
-                setPostData(data.post);
-                setCommentList(data.commentList);
-            }
-            setIsLoading(false);
-        }
-
-        getData();
-    }, [postId]);
-
-    if (!isLoading && !postData && postId) {
-        return <h1> Error </h1>
-    }
-
-    if (isLoading) {
-        return <h1> Loading... </h1>
-    }
-
+const SinglePostPage = (props: SinglePostPageProps) => {
     return(
         <PostContainer>
-            {postData && 
-                <Post post={postData} showComments={true} commentList={commentList} />
-            }
+            <Post post={props.post} showComments={true} commentList={props.commentList} />
         </PostContainer>
     );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+    const { params, req, res} = context;
+
+    const postId = params && params.slug && params.slug[0];
+    if (!postId) {return { props: {}}};
+
+    const data = await getPostById(postId);
+
+    const response: GetServerSidePropsResult<SinglePostPageProps> = {
+        props: {
+            post: data.post,
+            commentList: data.commentList
+        }
+    };
+    return response;
+};
 
 export default SinglePostPage;

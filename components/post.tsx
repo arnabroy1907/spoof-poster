@@ -1,13 +1,15 @@
 /* eslint-disable react/no-unknown-property */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import st from 'styled-components';
-import { Post as PostType, Comment } from '../service/models';
+import { Post as PostType, Comment, UserBase } from '../service/models';
 import Image from 'next/image';
 import { LikeIcon } from './likeIcon';
 import { getStringedDate } from '../libs/utils/common.utils';
-import { getAllPosts } from '../service/db/dummy-data';
+import { getAllPosts, getLikedUsersByPost } from '../service/db/dummy-data';
 import { useRouter } from 'next/router';
 import { CommentItem } from './comment';
+import { BackToTop } from './backToTop';
+import { LikesModal } from './likesModal';
 
 type PostProps = {
     post: PostType;
@@ -29,7 +31,13 @@ type ButtonProps = {
 }
 
 const PostMainWrapper = st.div`
-    width: 100%;
+    width: 70%;
+    @media only screen and (min-width: 599px) and (max-width: 900px) {
+        width: 80%;
+    }
+    @media only screen and (max-width: 599px) {
+        width: 100%;
+    }
 `;
 
 const PostContainer = st.div`
@@ -39,12 +47,6 @@ const PostContainer = st.div`
     box-shadow: 0 0 5px 2px #ccc;
     display: flex;
     flex-direction: column;
-    @media only screen and (min-width: 599px) and (max-width: 900px) {
-        width: 80%;
-    }
-    @media only screen and (max-width: 599px) {
-        width: 100%;
-    }
 `;
 
 const PostCommentsContainer = st.div`
@@ -59,6 +61,7 @@ const PostHeaderSection = st.div`
 `;
 
 const PostHeaderSectionImage = st.div`
+    cursor: pointer;
     position: relative;
     width: 3rem;
     height: 3rem;
@@ -70,6 +73,7 @@ const PostHeaderSectionImage = st.div`
 
 const PostHeaderSectionName = st.div`
     margin: 0 1rem;
+    cursor: pointer;
     h4 {
         font-size: 16px;
         margin: 0;
@@ -114,6 +118,10 @@ const TextTemplateImage = st.div`
     font-weight: ${(props: TextImageProps) => props.fontWeight};
     font-style: ${(props: TextImageProps) => props.fontStyle};
     font-family: ${(props: TextImageProps) => props.fontFamily};
+    @media only screen and (max-width: 599px) {
+        font-size: 16px;
+        padding: 2rem;
+    }
 `;
 
 const PostContentSection = st.div`
@@ -130,7 +138,6 @@ const CommentIconWrapper = st.div`
     padding: 0;
     margin: 0;
     margin-left: 0.5rem;
-    cursor: pointer;
     svg {
         fill: #333;
         position: relative;
@@ -147,6 +154,10 @@ const PostLCCounts = st.span`
     color: #222;
     margin: 0 0.25rem;
     width: 2.75rem;
+    &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
 `;
 
 const PostAddCommentSection = st.form`
@@ -193,6 +204,9 @@ const PostCaptionSection = st.div`
     padding: 0 1rem;
     padding-bottom: 1rem;
     font-style: italic;
+    @media only screen and (max-width: 480px) {
+        font-size: 12px;
+    }
 `;
 
 const CommentIcon = (props: any) => {
@@ -213,6 +227,8 @@ export const Post = (props: PostProps) => {
     const [commentsCount, setCommentsCount] = useState(post.commentsCount);
     const [commentValue, setCommentValue] = useState('');
     const [buttonDisabled, setButtonDisabled] = useState(true);
+    const [showLikesModal, setShowLikesModal] = useState(false);
+    const [likedUsersList, setLikedUsersList] = useState<UserBase[]>([]);
 
     const caption = post.caption || post.textData?.text;
 
@@ -261,18 +277,22 @@ export const Post = (props: PostProps) => {
         setCommentsCount(commentsCount + 1);
     }
 
+    const goToUserPage = () => {
+        rtr.push(`/user/${post.user.userId}`);
+    }
+
     return (
         <PostMainWrapper>
         <PostContainer>
             <PostHeaderSection>
-                <PostHeaderSectionImage>
+                <PostHeaderSectionImage onClick={goToUserPage}>
                     <Image
                         src={post.user.pic || '/images/no-pic-user.png'}
                         alt={post.user.userId}
                         layout='fill'
                     />
                 </PostHeaderSectionImage>
-                <PostHeaderSectionName>
+                <PostHeaderSectionName onClick={goToUserPage}>
                     <h4> {post.user.name} </h4>
                     <h5> {post.user.username} </h5>
                 </PostHeaderSectionName>
@@ -306,22 +326,26 @@ export const Post = (props: PostProps) => {
                         // DB Ops
                     }}
                 />
-                <PostLCCounts>
+                <PostLCCounts onClick={async () => {
+                    const likedUsers = await getLikedUsersByPost(post.id);
+                    setLikedUsersList(likedUsers);
+                    setShowLikesModal(true);
+                }}>
                     {likesCountString}
                 </PostLCCounts>
-                <CommentIcon
+                <CommentIcon />
+                <PostLCCounts
                     onClick={() => {
                         if (!props.showComments) {
                             rtr.push({
                                 pathname: '/feeds/[...slug]',
                                 query: {
-                                    slug: [post.id, post.headline.toLowerCase().replaceAll(' ', '-')]
+                                    slug: [post.id, post.headline.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '').replaceAll(' ', '-')]
                                 }
                             });
                         }
                     }}
-                />
-                <PostLCCounts>
+                >
                     {commentCountString}
                 </PostLCCounts>
             </PostContentSection>
@@ -331,30 +355,35 @@ export const Post = (props: PostProps) => {
             <PostDateSection>
                 {dateString}
             </PostDateSection>
-            {!props.showComments && 
-                <PostAddCommentSection
-                    onSubmit = {doCommentSubmit}
-                >
-                    <input
-                        type='text'
-                        name='comment-input'
-                        placeholder='Add a comment...'
-                        value={commentValue}
-                        onChange={(e) => {
-                            setCommentValue(e.target.value);
-                            if (e.target.value.length > 0) setButtonDisabled(false);
-                            else setButtonDisabled(true);
-                        }}
-                    />
-                    <PostCommentButton
-                        isDisabled={buttonDisabled}
-                    > Post </PostCommentButton>
-                </PostAddCommentSection>
-            }
+            <PostAddCommentSection
+                onSubmit = {doCommentSubmit}
+            >
+                <input
+                    type='text'
+                    name='comment-input'
+                    placeholder='Add a comment...'
+                    value={commentValue}
+                    onChange={(e) => {
+                        setCommentValue(e.target.value);
+                        if (e.target.value.length > 0) setButtonDisabled(false);
+                        else setButtonDisabled(true);
+                    }}
+                />
+                <PostCommentButton
+                    isDisabled={buttonDisabled}
+                > Post </PostCommentButton>
+            </PostAddCommentSection>
         </PostContainer>
             <PostCommentsContainer>
                 {commentList.map(comment => <CommentItem key={comment.id} comment={comment}/>)}
             </PostCommentsContainer>
+            <BackToTop />
+            {showLikesModal && <LikesModal
+                userList={likedUsersList}
+                onClose={() => {
+                    setShowLikesModal(false); 
+                }} 
+            />}
         </PostMainWrapper>
     );
 }

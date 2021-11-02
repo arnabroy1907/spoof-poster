@@ -14,9 +14,13 @@ const FeedsContainer = st.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    @media only screen and (max-width: 480px) {
+    @media only screen and (max-width: 599px) {
         width: 100%;
         min-width: 19rem;
+    }
+    @media only screen and (min-width: 599px) and (max-width: 900px) {
+        width: 85%;
+        min-width: 27rem;
     }
 `;
 
