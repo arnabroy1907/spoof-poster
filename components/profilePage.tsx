@@ -53,7 +53,6 @@ const ProfileImageWrapper  = st.div`
 
 const ProfileNameSection = st.div`
     padding: 1rem;
-    padding-left: 4rem;
     text-align: left;
     
     h1 {
@@ -105,11 +104,11 @@ const ProfileDescription = st.div`
 const PostSection = st.div`
     margin-top: 2rem;
     border-top: 1px solid #ccc;
-    padding: 1rem;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: left;
 `;
 
 type EmailIconProps = {

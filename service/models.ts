@@ -1,3 +1,14 @@
+export interface TextDataType {
+    text: string;
+    style: {
+        backgroundColor: string;
+        fontColor: string;
+        fontSize: string;
+        fontWeight: string;
+        fontStyle: string;
+        fontFamily: string;
+    }
+}
 export interface UserBase {
     userId: string;
     username: string;
@@ -17,17 +28,7 @@ export interface Post {
     user: UserBase;
     template: 'TEXT'|'IMAGE';
     image?: string;
-    textData?: {
-        text: string;
-        style: {
-            backgroundColor: string;
-            fontColor: string;
-            fontSize: string;
-            fontWeight: string;
-            fontStyle: string;
-            fontFamily: string;
-        }
-    };
+    textData?: TextDataType;
     caption?: string;
     headline: string;
     likesCount: number;
